@@ -642,7 +642,11 @@ class JsonSchemaParser(Parser):
                     # Local Reference – $ref: '#/definitions/myElement'
                     pass
                 else:
-                    relative_path, object_path = obj.ref.split('#/')
+                    relative_path, object_path = (
+                        obj.ref.split('#/') 
+                        if '#/' in obj.ref 
+                        else (obj.ref, '')
+                    )
                     remote_object: Optional[
                         Dict[str, Any]
                     ] = self.remote_object_cache.get(relative_path)
