@@ -141,7 +141,10 @@ class Source(BaseModel):
 
     @classmethod
     def from_path(cls, path: Path, base_path: Path) -> 'Source':
-        return cls(path=path.relative_to(base_path), text=path.read_text(),)
+        return cls(
+            path=path.relative_to(base_path),
+            text=path.read_text(),
+        )
 
 
 class Parser(ABC):
@@ -252,33 +255,23 @@ class Parser(ABC):
         _, sorted_data_models, require_update_action_models = sort_data_models(
             self.results
         )
-        #print([(x.name, x.module_path) for x in self.results])
         grouped_results = defaultdict(int)
         for m in self.results:
-            # print(m.name, m.module_path)
             if m.module_path:
                 grouped_results[m.name] += 1
-        #print([(k, v) for k, v in grouped_results.items()])
 
         for model_name, model in sorted_data_models.items():
             if grouped_results[model_name] >= 1:
-                model.path = Path(model_name[0].lower() + model_name[1:])# + '.' + model_name) #None
-                model.name = model_name
-
-        print([(x.name, x.module_path) for x in sorted_data_models.values()])
+                model.path = Path(model_name[0].lower() + model_name[1:])
 
         results: Dict[Tuple[str, ...], Result] = {}
 
         module_key = lambda x: x.module_path
-        # print([(x.name, x.module_path, x.reference_classes) for x in sorted_data_models.values()])
         # process in reverse order to correctly establish module levels
         grouped_models = groupby(
             sorted(sorted_data_models.values(), key=module_key, reverse=True),
             key=module_key,
         )
-
-        # print()
-        # print([(k, *v) for k, v in grouped_models])
 
         for module, models in (
             (k, [*v]) for k, v in grouped_models
@@ -330,7 +323,6 @@ class Parser(ABC):
                                 and reference.actual_module_name == module_path
                             ):
                                 try:
-                                    print('trying to remove :', name, ' from: ', model.name)
                                     model.reference_classes.remove(name)
                                 except Exception:
                                     pass
@@ -354,19 +346,21 @@ class Parser(ABC):
                         from_ += "."
                     print('from: ', from_, 'import: ', import_)
                     target_model = sorted_data_models.get(ref_name)
-                    import_ = ref_name.split('.')[0] if '.' in ref_name else ref_name[0].lower() + ref_name[1:]
+                    import_ = (
+                        ref_name.split('.')[0]
+                        if '.' in ref_name
+                        else ref_name[0].lower() + ref_name[1:]
+                    )
                     # this model is in init so import it directly
                     if target_model and not target_model.module_path:
                         import_ = ref_name
                     if from_ and import_:
                         import_ = Import(
-                                from_=from_,
-                                import_=import_,
-                                alias=alias_map.get(f'{from_}/{import_}'),
-                            )
-                        imports.append(
-                           import_
+                            from_=from_,
+                            import_=import_,
+                            alias=alias_map.get(f'{from_}/{import_}'),
                         )
+                        imports.append(import_)
 
             if with_import:
                 result += [str(imports), str(self.imports), '\n']

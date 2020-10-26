@@ -165,9 +165,9 @@ def test_main_jsonschema_nested_deep():
     with TemporaryDirectory() as output_dir:
         output_init_file: Path = Path(output_dir) / '__init__.py'
         output_nested_file: Path = Path(output_dir) / 'nested/deep.py'
-        output_empty_parent_nested_file: Path = Path(
-            output_dir
-        ) / 'empty_parent/nested/deep.py'
+        output_empty_parent_nested_file: Path = (
+            Path(output_dir) / 'empty_parent/nested/deep.py'
+        )
 
         return_code: Exit = main(
             [
@@ -514,7 +514,10 @@ def test_stdin(monkeypatch):
         output_file: Path = output_dir / 'output.py'
         monkeypatch.setattr('sys.stdin', (OPEN_API_DATA_PATH / 'api.yaml').open())
         return_code: Exit = main(
-            ['--output', str(output_file),]
+            [
+                '--output',
+                str(output_file),
+            ]
         )
         assert return_code == Exit.OK
         assert (

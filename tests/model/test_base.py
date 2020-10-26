@@ -150,33 +150,55 @@ def test_data_field():
     field = DataModelFieldBase(name='a', data_type=DataType(type='str'), required=True)
     assert field.type_hint == 'str'
     field = DataModelFieldBase(
-        name='a', data_type=DataType(type='str', is_list=True), required=True,
+        name='a',
+        data_type=DataType(type='str', is_list=True),
+        required=True,
     )
     assert field.type_hint == 'List[str]'
     field = DataModelFieldBase(name='a', data_type=DataType(type='str'), required=True)
     assert field.type_hint == 'str'
-    field = DataModelFieldBase(name='a', data_type=DataType(type='str'), required=True,)
+    field = DataModelFieldBase(
+        name='a',
+        data_type=DataType(type='str'),
+        required=True,
+    )
     assert field.type_hint == 'str'
     field = DataModelFieldBase(
-        name='a', data_type=DataType(type='str', is_list=True), required=True,
+        name='a',
+        data_type=DataType(type='str', is_list=True),
+        required=True,
     )
     assert field.type_hint == 'List[str]'
     field = DataModelFieldBase(name='a', data_type=DataType(type='str'), required=False)
     assert field.type_hint == 'Optional[str]'
     field = DataModelFieldBase(
-        name='a', data_type=DataType(type='str', is_list=True,), required=False,
+        name='a',
+        data_type=DataType(
+            type='str',
+            is_list=True,
+        ),
+        required=False,
     )
     assert field.type_hint == 'Optional[List[str]]'
     field = DataModelFieldBase(
-        name='a', data_type=DataType(type='str'), required=False,
+        name='a',
+        data_type=DataType(type='str'),
+        required=False,
     )
     assert field.type_hint == 'Optional[str]'
     field = DataModelFieldBase(
-        name='a', data_type=DataType(type='str'), required=False,
+        name='a',
+        data_type=DataType(type='str'),
+        required=False,
     )
     assert field.type_hint == 'Optional[str]'
     field = DataModelFieldBase(
-        name='a', data_type=DataType(type='str', is_list=True,), required=False,
+        name='a',
+        data_type=DataType(
+            type='str',
+            is_list=True,
+        ),
+        required=False,
     )
     assert field.type_hint == 'Optional[List[str]]'
 
@@ -189,7 +211,8 @@ def test_data_field():
     field = DataModelFieldBase(
         name='a',
         data_type=DataType(
-            data_types=[DataType(type='str'), DataType(type='int')], is_list=True,
+            data_types=[DataType(type='str'), DataType(type='int')],
+            is_list=True,
         ),
         required=True,
     )
@@ -223,7 +246,8 @@ def test_data_field():
     field = DataModelFieldBase(
         name='a',
         data_type=DataType(
-            data_types=[DataType(type='str'), DataType(type='int')], is_list=True,
+            data_types=[DataType(type='str'), DataType(type='int')],
+            is_list=True,
         ),
         required=False,
     )

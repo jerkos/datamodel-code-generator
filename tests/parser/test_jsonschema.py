@@ -74,7 +74,14 @@ def test_json_schema_object_ref_url_json(mocker):
             "$id": "https://example.com/person.schema.json",
             "$schema": "http://json-schema.org/draft-07/schema#",
             "definitions": {
-                "User": {"type": "object", "properties": {"name": {"type": "string",}},}
+                "User": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                        }
+                    },
+                }
             },
         },
     )
@@ -86,7 +93,9 @@ def test_json_schema_object_ref_url_json(mocker):
     name: Optional[str] = None'''
     )
     parser.parse_ref(obj, ['Model'])
-    mock_get.assert_called_once_with('https://example.org/schema.json',)
+    mock_get.assert_called_once_with(
+        'https://example.org/schema.json',
+    )
 
 
 def test_json_schema_object_ref_url_yaml(mocker):
@@ -106,7 +115,9 @@ def test_json_schema_object_ref_url_yaml(mocker):
     name: Optional[str] = Field(None, example='ken')'''
     )
     parser.parse_ref(obj, [])
-    mock_get.assert_called_once_with('https://example.org/schema.yaml',)
+    mock_get.assert_called_once_with(
+        'https://example.org/schema.yaml',
+    )
 
 
 def test_json_schema_object_cached_ref_url_yaml(mocker):
@@ -136,7 +147,9 @@ def test_json_schema_object_cached_ref_url_yaml(mocker):
 class User(BaseModel):
     name: Optional[str] = Field(None, example='ken')'''
     )
-    mock_get.assert_called_once_with('https://example.org/schema.yaml',)
+    mock_get.assert_called_once_with(
+        'https://example.org/schema.yaml',
+    )
 
 
 def test_json_schema_ref_url_json(mocker):
@@ -160,7 +173,9 @@ def test_json_schema_ref_url_json(mocker):
 class User(BaseModel):
     name: Optional[str] = Field(None, example='ken')'''
     )
-    mock_get.assert_called_once_with('https://example.org/schema.json',)
+    mock_get.assert_called_once_with(
+        'https://example.org/schema.json',
+    )
 
 
 @pytest.mark.parametrize(
@@ -200,7 +215,10 @@ class User(BaseModel):
                 "title": "person-object",
                 "type": "object",
                 "properties": {
-                    "name": {"type": "string", "description": "The person's name.",},
+                    "name": {
+                        "type": "string",
+                        "description": "The person's name.",
+                    },
                     "home-address": {
                         "$ref": "#/definitions/home-address",
                         "description": "The person's home address.",
@@ -276,7 +294,10 @@ def test_parse_one_of_object(source_obj, generated_classes):
                 "title": "defaults",
                 "type": "object",
                 "properties": {
-                    "string": {"type": "string", "default": "default string",},
+                    "string": {
+                        "type": "string",
+                        "default": "default string",
+                    },
                     "string_on_field": {
                         "type": "string",
                         "default": "default string",
@@ -312,7 +333,8 @@ def test_parse_default(source_obj, generated_classes):
 
 def test_parse_nested_array():
     parser = JsonSchemaParser(
-        DATA_PATH / 'nested_array.json', data_model_field_type=DataModelFieldBase,
+        DATA_PATH / 'nested_array.json',
+        data_model_field_type=DataModelFieldBase,
     )
     parser.parse()
     assert (
@@ -363,12 +385,20 @@ def test_get_data_type(schema_type, schema_format, result_type, from_, import_):
 
 @pytest.mark.parametrize(
     'schema_types,result_types',
-    [(['integer', 'number'], ['int', 'float']), (['integer', 'null'], ['int']),],
+    [
+        (['integer', 'number'], ['int', 'float']),
+        (['integer', 'null'], ['int']),
+    ],
 )
 def test_get_data_type_array(schema_types, result_types):
     parser = JsonSchemaParser('')
     assert parser.get_data_type(JsonSchemaObject(type=schema_types)) == DataType(
-        data_types=[DataType(type=r,) for r in result_types],
+        data_types=[
+            DataType(
+                type=r,
+            )
+            for r in result_types
+        ],
         is_optional='null' in schema_types,
         imports_=[IMPORT_OPTIONAL] if 'null' in schema_types else [],
     )

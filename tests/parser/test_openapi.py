@@ -156,7 +156,10 @@ class Pets(BaseModel):
     __root__: List[Pet]''',
         ),
         (
-            {'type': 'array', 'items': {},},
+            {
+                'type': 'array',
+                'items': {},
+            },
             '''class Pets(BaseModel):
     __root__: List''',
         ),
@@ -194,9 +197,21 @@ def test_parse_root_type(source_obj, generated_classes):
 @pytest.mark.parametrize(
     'with_import, format_, base_class',
     [
-        (True, True, None,),
-        (False, True, None,),
-        (True, False, None,),
+        (
+            True,
+            True,
+            None,
+        ),
+        (
+            False,
+            True,
+            None,
+        ),
+        (
+            True,
+            False,
+            None,
+        ),
         (True, True, 'custom_module.Base'),
     ],
 )
@@ -237,7 +252,9 @@ def test_parse_root_type(source_obj, generated_classes):
 
 
 def test_openapi_parser_parse_duplicate_models():
-    parser = OpenAPIParser(Path(DATA_PATH / 'duplicate_models.yaml'),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'duplicate_models.yaml'),
+    )
     assert (
         parser.parse()
         == (
@@ -249,7 +266,9 @@ def test_openapi_parser_parse_duplicate_models():
 
 
 def test_openapi_parser_parse_resolved_models():
-    parser = OpenAPIParser(Path(DATA_PATH / 'resolved_models.yaml'),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'resolved_models.yaml'),
+    )
     assert (
         parser.parse()
         == (
@@ -261,7 +280,9 @@ def test_openapi_parser_parse_resolved_models():
 
 
 def test_openapi_parser_parse_lazy_resolved_models():
-    parser = OpenAPIParser(Path(DATA_PATH / 'lazy_resolved_models.yaml'),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'lazy_resolved_models.yaml'),
+    )
     assert (
         parser.parse()
         == '''from __future__ import annotations
@@ -318,7 +339,9 @@ def test_openapi_parser_parse_enum_models():
 
 
 def test_openapi_parser_parse_anyof():
-    parser = OpenAPIParser(Path(DATA_PATH / 'anyof.yaml'),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'anyof.yaml'),
+    )
     assert (
         parser.parse()
         == (
@@ -328,7 +351,9 @@ def test_openapi_parser_parse_anyof():
 
 
 def test_openapi_parser_parse_nested_anyof():
-    parser = OpenAPIParser(Path(DATA_PATH / 'nested_anyof.yaml').read_text(),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'nested_anyof.yaml').read_text(),
+    )
     assert (
         parser.parse()
         == (
@@ -338,7 +363,9 @@ def test_openapi_parser_parse_nested_anyof():
 
 
 def test_openapi_parser_parse_allof():
-    parser = OpenAPIParser(Path(DATA_PATH / 'allof.yaml'),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'allof.yaml'),
+    )
     assert (
         parser.parse()
         == (
@@ -348,7 +375,9 @@ def test_openapi_parser_parse_allof():
 
 
 def test_openapi_parser_parse_alias():
-    parser = OpenAPIParser(Path(DATA_PATH / 'alias.yaml'),)
+    parser = OpenAPIParser(
+        Path(DATA_PATH / 'alias.yaml'),
+    )
     results = {'/'.join(p): r for p, r in parser.parse().items()}
     openapi_parser_parse_alias_dir = (
         EXPECTED_OPEN_API_PATH / 'openapi_parser_parse_alias'
@@ -359,7 +388,8 @@ def test_openapi_parser_parse_alias():
 
 
 @pytest.mark.parametrize(
-    'with_import, format_, base_class', [(True, True, None)],
+    'with_import, format_, base_class',
+    [(True, True, None)],
 )
 def test_openapi_parser_parse_modular(with_import, format_, base_class):
     parser = OpenAPIParser(
@@ -378,10 +408,26 @@ def test_openapi_parser_parse_modular(with_import, format_, base_class):
 @pytest.mark.parametrize(
     'with_import, format_, base_class',
     [
-        (True, True, None,),
-        (False, True, None,),
-        (True, False, None,),
-        (True, True, 'custom_module.Base',),
+        (
+            True,
+            True,
+            None,
+        ),
+        (
+            False,
+            True,
+            None,
+        ),
+        (
+            True,
+            False,
+            None,
+        ),
+        (
+            True,
+            True,
+            'custom_module.Base',
+        ),
     ],
 )
 def test_openapi_parser_parse_additional_properties(with_import, format_, base_class):
@@ -403,7 +449,14 @@ def test_openapi_parser_parse_additional_properties(with_import, format_, base_c
 
 
 @pytest.mark.parametrize(
-    'with_import, format_, base_class', [(True, True, None,),],
+    'with_import, format_, base_class',
+    [
+        (
+            True,
+            True,
+            None,
+        ),
+    ],
 )
 def test_openapi_parser_parse_array_enum(with_import, format_, base_class):
     parser = OpenAPIParser(
@@ -419,7 +472,14 @@ def test_openapi_parser_parse_array_enum(with_import, format_, base_class):
 
 
 @pytest.mark.parametrize(
-    'with_import, format_, base_class', [(True, True, None,),],
+    'with_import, format_, base_class',
+    [
+        (
+            True,
+            True,
+            None,
+        ),
+    ],
 )
 def test_openapi_parser_parse_remote_ref(with_import, format_, base_class):
     parser = OpenAPIParser(
@@ -525,7 +585,8 @@ def test_openapi_model_resolver():
 
 def test_openapi_parser_parse_any():
     parser = OpenAPIParser(
-        data_model_field_type=DataModelFieldBase, source=Path(DATA_PATH / 'any.yaml'),
+        data_model_field_type=DataModelFieldBase,
+        source=Path(DATA_PATH / 'any.yaml'),
     )
     assert (
         parser.parse()

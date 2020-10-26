@@ -150,9 +150,9 @@ class DataModel(TemplateBase, ABC):
         self.base_classes: List[str] = base_classes
         self.path: Optional[Path] = path
 
-        self.reference_classes: Set[str] = {
-            r for r in base_classes if r != self.BASE_CLASS
-        } if base_classes else set()
+        self.reference_classes: Set[str] = (
+            {r for r in base_classes if r != self.BASE_CLASS} if base_classes else set()
+        )
         if reference_classes:
             self.reference_classes.update(reference_classes)
 
