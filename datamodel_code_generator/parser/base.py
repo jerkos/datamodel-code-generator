@@ -277,7 +277,6 @@ class Parser(ABC):
             (k, [*v]) for k, v in grouped_models
         ):  # type: Tuple[str, ...], List[DataModel]
             module_path = '.'.join(module)
-            print('module path: ', module_path)
             init = False
             if module:
                 parent = (*module[:-1], '__init__.py')
@@ -339,12 +338,10 @@ class Parser(ABC):
                             model.reference_classes.remove(name)
                             model.reference_classes.add(new_name)
                         data_type.type = new_name
-                print(model.name, module_path, model.reference_classes)
                 for ref_name in model.reference_classes:
                     from_, import_ = relative(module_path, ref_name)
                     if init:
                         from_ += "."
-                    print('from: ', from_, 'import: ', import_)
                     target_model = sorted_data_models.get(ref_name)
                     import_ = (
                         ref_name.split('.')[0]
