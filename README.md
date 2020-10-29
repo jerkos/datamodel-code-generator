@@ -10,6 +10,14 @@ This code generator creates pydantic model from an openapi file and others.
 ![license](https://img.shields.io/github/license/koxudaxi/datamodel-code-generator.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
+# Warning
+
+this piece of software has been adapted to our use case and fixes are not generic (but may be). Fixes deals with the jsonschema parser.
+
+- fix parsing of recursive ref
+- create a file when needed when multiple input files
+- fix enum (very specific use case) when key are integers
+
 ## Help
 See [documentation](https://koxudaxi.github.io/datamodel-code-generator) for more details.
 
