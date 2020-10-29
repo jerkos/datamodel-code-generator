@@ -1,3 +1,4 @@
+import itertools
 import re
 from abc import ABC, abstractmethod
 from collections import OrderedDict, defaultdict
@@ -257,12 +258,20 @@ class Parser(ABC):
         )
         grouped_results = defaultdict(int)
         for m in self.results:
-            if m.module_path:
+            target_models = set(
+                itertools.chain.from_iterable(
+                    [m1.module_path for m1 in self.results if m1.name == m.name]
+                )
+            )
+
+            if m.module_path and len(target_models) > 1:
                 grouped_results[m.name] += 1
 
         for model_name, model in sorted_data_models.items():
-            if grouped_results[model_name] >= 1:
-                model.path = Path(model_name[0].lower() + model_name[1:])
+            if grouped_results[model_name] > 1:
+                model.path = Path(
+                    model_name[0].lower() + model_name[1:]
+                )
 
         results: Dict[Tuple[str, ...], Result] = {}
 
@@ -333,10 +342,18 @@ class Parser(ABC):
                                 full_path.split('/'), import_, unique=True
                             ).name
                             alias_map[full_path] = None if alias == import_ else alias
-                        new_name = f'{alias}.{name}' if from_ and import_ else name
+                        new_name = (
+                            f'{alias}.{name}'
+                            if from_ and import_ and module_path != alias
+                            else name
+                        )
+
                         if name in model.reference_classes:
                             model.reference_classes.remove(name)
-                            model.reference_classes.add(new_name)
+
+                            if module_path != alias:
+                                model.reference_classes.add(new_name)
+
                         data_type.type = new_name
                 for ref_name in model.reference_classes:
                     from_, import_ = relative(module_path, ref_name)
@@ -348,9 +365,20 @@ class Parser(ABC):
                         if '.' in ref_name
                         else ref_name[0].lower() + ref_name[1:]
                     )
+
                     # this model is in init so import it directly
                     if target_model and not target_model.module_path:
                         import_ = ref_name
+
+                    # remove import if the target dependencies is in the same module
+                    # todo: make something more generic not only first path
+                    if (
+                        target_model
+                        and len(target_model.module_path) >= 1
+                        and target_model.module_path[0] == module_path
+                    ):
+                        import_ = ''
+
                     if from_ and import_:
                         import_ = Import(
                             from_=from_,
@@ -358,7 +386,6 @@ class Parser(ABC):
                             alias=alias_map.get(f'{from_}/{import_}'),
                         )
                         imports.append(import_)
-
             if with_import:
                 result += [str(imports), str(self.imports), '\n']
 

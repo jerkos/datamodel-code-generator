@@ -520,6 +520,7 @@ class JsonSchemaParser(Parser):
                 item_obj_data_types.append(array_field.data_type)
             else:
                 item_obj_data_types.append(self.get_data_type(item))
+
         field = self.data_model_field_type(
             data_type=self.data_type(
                 data_types=item_obj_data_types,
@@ -643,9 +644,7 @@ class JsonSchemaParser(Parser):
                     pass
                 else:
                     relative_path, object_path = (
-                        obj.ref.split('#/') 
-                        if '#/' in obj.ref 
-                        else (obj.ref, '')
+                        obj.ref.split('#/') if '#/' in obj.ref else (obj.ref, '')
                     )
                     remote_object: Optional[
                         Dict[str, Any]
