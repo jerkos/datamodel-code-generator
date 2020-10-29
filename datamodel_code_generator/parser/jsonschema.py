@@ -408,7 +408,7 @@ class JsonSchemaParser(Parser):
                     field_type = self.data_type_manager.get_data_type(Types.object)
             elif field.enum:
                 enum = self.parse_enum(
-                    field_name, field, [*path, field_name], unique=True
+                    field_name, field, [*path, field_name], unique=False
                 )
                 field_type = self.data_type.from_model_name(enum.name)
             else:
