@@ -256,6 +256,7 @@ class Parser(ABC):
         _, sorted_data_models, require_update_action_models = sort_data_models(
             self.results
         )
+
         grouped_results = defaultdict(int)
         for m in self.results:
             target_models = set(
@@ -269,9 +270,7 @@ class Parser(ABC):
 
         for model_name, model in sorted_data_models.items():
             if grouped_results[model_name] > 1:
-                model.path = Path(
-                    model_name[0].lower() + model_name[1:]
-                )
+                model.path = Path(model_name[0].lower() + model_name[1:])
 
         results: Dict[Tuple[str, ...], Result] = {}
 
@@ -282,10 +281,18 @@ class Parser(ABC):
             key=module_key,
         )
 
+        more_init_imports = []
+        all_export = []
         for module, models in (
             (k, [*v]) for k, v in grouped_models
         ):  # type: Tuple[str, ...], List[DataModel]
             module_path = '.'.join(module)
+            models_name_in_current_module = [m.name for m in models]
+            all_export += models_name_in_current_module
+            if module_path:
+                more_init_imports.append(
+                    f'''from .{camel_to_snake(module_path)} import {', '.join(models_name_in_current_module)}'''
+                )
             init = False
             if module:
                 parent = (*module[:-1], '__init__.py')
@@ -347,13 +354,10 @@ class Parser(ABC):
                             if from_ and import_ and module_path != alias
                             else name
                         )
-
                         if name in model.reference_classes:
                             model.reference_classes.remove(name)
-
                             if module_path != alias:
                                 model.reference_classes.add(new_name)
-
                         data_type.type = new_name
                 for ref_name in model.reference_classes:
                     from_, import_ = relative(module_path, ref_name)
@@ -365,20 +369,15 @@ class Parser(ABC):
                         if '.' in ref_name
                         else ref_name[0].lower() + ref_name[1:]
                     )
-
                     # this model is in init so import it directly
                     if target_model and not target_model.module_path:
                         import_ = ref_name
-
-                    # remove import if the target dependencies is in the same module
-                    # todo: make something more generic not only first path
                     if (
                         target_model
                         and len(target_model.module_path) >= 1
                         and target_model.module_path[0] == module_path
                     ):
                         import_ = ''
-
                     if from_ and import_:
                         import_ = Import(
                             from_=from_,
@@ -404,5 +403,13 @@ class Parser(ABC):
         # retain existing behaviour
         if [*results] == [('__init__.py',)]:
             return results[('__init__.py',)].body
+
+        init_content = results[('__init__.py',)]
+        if init_content:
+            all_str = f'''__all__ = [{','.join([f'"{name}"' for name in all_export if name])}]\n\n'''
+            init_content.body = format_code(
+                '\n'.join(more_init_imports) + '\n\n' + init_content.body + all_str,
+                self.target_python_version,
+✨            )
 
         return results

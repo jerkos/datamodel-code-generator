@@ -30,7 +30,7 @@ from .model.pydantic import (
     dump_resolve_reference_action,
 )
 from .model.pydantic.types import DataTypeManager
-from .parser.base import Parser
+from .parser.base import Parser, camel_to_snake
 from .version import version as __version__
 
 T = TypeVar('T')
@@ -201,7 +201,6 @@ def generate(
     else:
         input_filename = input_.name
     if isinstance(results, str):
-
         modules = {output: (results, input_filename)}
     else:
         if output is None:
@@ -209,7 +208,10 @@ def generate(
         if output.suffix:
             raise Error('Modular references require an output directory, not a file')
         modules = {
-            output.joinpath(*name): (result.body, str(result.source or input_filename))
+            output.joinpath(camel_to_snake(name[0])): (
+                result.body,
+                str(result.source or input_filename),
+            )
             for name, result in sorted(results.items())
         }
 
@@ -224,6 +226,7 @@ def generate(
     file: Optional[IO[Any]]
     for path, body_and_filename in modules.items():
         body, filename = body_and_filename
+        # transform into snake case
         if path is not None:
             if not path.parent.exists():
                 path.parent.mkdir(parents=True)

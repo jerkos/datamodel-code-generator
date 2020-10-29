@@ -637,7 +637,6 @@ class JsonSchemaParser(Parser):
 
             reference = self.model_resolver.get(obj.ref)
             if (not reference or not reference.loaded) and obj.ref not in ref:
-                print('passed !: ', obj.ref, ref)
                 # https://swagger.io/docs/specification/using-ref/
                 if obj.ref.startswith('#'):
                     # Local Reference – $ref: '#/definitions/myElement'
