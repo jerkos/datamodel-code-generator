@@ -408,10 +408,12 @@ class Parser(ABC):
         if init_content:
             all_str = f'''__all__ = [{', '.join([f'"{name}"' for name in all_export if name])}]\n\n'''
             init_content.body = format_code(
-                format_code(init_content.body, self.target_python_version) + '\n'.join(
-                    more_init_imports) + '\n\n' + all_str,
+                format_code(init_content.body, self.target_python_version)
+                + '\n'.join(more_init_imports)
+                + '\n\n'
+                + all_str,
                 self.target_python_version,
-                isort=False
+                isort=False,
             )
 
         return results

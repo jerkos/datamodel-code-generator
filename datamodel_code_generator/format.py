@@ -20,9 +20,9 @@ BLACK_PYTHON_VERSION: Dict[PythonVersion, black.TargetVersion] = {
 }
 
 
-def format_code(code: str, python_version: PythonVersion) -> str:
-
-    code = apply_isort(code)
+def format_code(code: str, python_version: PythonVersion, *, isort: bool = True) -> str:
+    if isort:
+        code = apply_isort(code)
     code = apply_black(code, python_version)
     return code
 
