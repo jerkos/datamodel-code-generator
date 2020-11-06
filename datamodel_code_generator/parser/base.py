@@ -410,6 +410,6 @@ class Parser(ABC):
             init_content.body = format_code(
                 '\n'.join(more_init_imports) + '\n\n' + init_content.body + all_str,
                 self.target_python_version,
-✨            )
+            )
 
         return results

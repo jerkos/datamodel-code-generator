@@ -13,6 +13,6 @@ extras_require = {
     **config['options']['extras_require'],
 }
 extras_require['all'] = [*extras_require.values()]
-use_scm_version = {'write_to': Path(config['metadata']['name'].replace('-', '_'), 'version.py')}
+# use_scm_version = {'write_to': Path(config['metadata']['name'].replace('-', '_'), 'version.py')}
 
-setup(extras_require=extras_require, use_scm_version=use_scm_version)
+setup(extras_require=extras_require) # use_scm_version=use_scm_version)
