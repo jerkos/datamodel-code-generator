@@ -336,6 +336,9 @@ class JsonSchemaParser(Parser):
                 field_name
             )
             if field.ref:
+                # handle json ref
+                if field.ref.endswith('.json'):
+                    field.ref = field.ref + '#/'
                 field_type = self.get_ref_data_type(field.ref)
             elif field.is_array:
                 array_field = self.parse_array_fields(
@@ -488,6 +491,8 @@ class JsonSchemaParser(Parser):
                     )
                 )
             elif item.ref:
+                if item.ref.endswith('.json'):
+                    item.ref = item.ref + '#/'
                 item_obj_data_types.append(self.get_ref_data_type(item.ref))
             elif isinstance(item, JsonSchemaObject) and item.properties:
                 item_obj_data_types.append(
@@ -642,6 +647,10 @@ class JsonSchemaParser(Parser):
                     # Local Reference – $ref: '#/definitions/myElement'
                     pass
                 else:
+                    # handle json without #/
+                    if obj.ref.endswith('.json'):
+                        obj.ref = obj.ref + '#/'
+
                     relative_path, object_path = (
                         obj.ref.split('#/') if '#/' in obj.ref else (obj.ref, '')
                     )
