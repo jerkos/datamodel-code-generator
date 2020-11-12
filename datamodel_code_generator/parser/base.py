@@ -350,7 +350,7 @@ class Parser(ABC):
                             ).name
                             alias_map[full_path] = None if alias == import_ else alias
                         new_name = (
-                            f'{alias}.{name}'
+                            f'{camel_to_snake(alias)}.{name}'
                             if from_ and import_ and module_path != alias
                             else name
                         )
